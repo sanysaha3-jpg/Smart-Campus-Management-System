@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${item.title})}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="mb-3">
+        <a th:href="@{/lost-found}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Lost & Found
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Item Details -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+                <img th:if="${item.photoUrl != null and !item.photoUrl.isEmpty()}" th:src="${item.photoUrl}" style="height: 280px; width: 100%; object-fit: cover;" alt="Item Photo">
+                <div class="p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge px-3 py-2 rounded-pill fw-bold"
+                              th:classappend="${item.type == 'LOST' ? 'bg-danger' : 'bg-success'}"
+                              th:text="${item.type} + ' ITEM'">LOST ITEM</span>
+
+                        <span class="badge"
+                              th:classappend="${item.status == 'RESOLVED' ? 'bg-secondary' : item.status == 'CLAIMED' ? 'bg-info' : 'bg-warning text-dark'}"
+                              th:text="${item.status}">REPORTED</span>
+                    </div>
+
+                    <h2 class="fw-bold text-dark mb-3" th:text="${item.title}">Item Title</h2>
+
+                    <div class="row g-3 py-3 my-3 bg-light rounded-3 border">
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-tag text-primary me-1"></i> Category</small>
+                            <strong th:text="${item.category}">ELECTRONICS</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-calendar3 text-primary me-1"></i> Date</small>
+                            <strong th:text="${item.itemDate}">2026-11-14</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-geo-alt text-danger me-1"></i> Location</small>
+                            <strong th:text="${item.location}">Central Library</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-person text-info me-1"></i> Reporter</small>
+                            <strong th:text="${item.reportedBy.fullName}">Aarav</strong>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary mb-2">Item Description & Clues</h5>
+                    <p class="text-secondary leading-relaxed" style="white-space: pre-line;" th:text="${item.description}">
+                        Detailed description of item.
+                    </p>
+
+                    <div class="mt-4 pt-3 border-top">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-telephone-outbound text-primary me-1"></i> Reporter Contact Details</h6>
+                        <div class="d-flex flex-wrap gap-3 small text-muted">
+                            <span th:if="${item.contactPhone != null}"><i class="bi bi-telephone me-1"></i> <strong th:text="${item.contactPhone}">9876543210</strong></span>
+                            <span th:if="${item.contactEmail != null}"><i class="bi bi-envelope me-1"></i> <strong th:text="${item.contactEmail}">user@campus.edu</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center" th:if="${canVerify and item.status != 'RESOLVED'}">
+                        <span class="text-muted small">Finder / Admin actions:</span>
+                        <form th:action="@{'/lost-found/resolve/' + ${item.id}}" method="post">
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark this item as returned/resolved?')">
+                                <i class="bi bi-check2-all me-1"></i> Mark as Returned / Resolved
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Claim Submission or Claim Verification Panel -->
+        <div class="col-lg-5">
+
+            <!-- 1. Ownership Claim Form (For other users claiming the item) -->
+            <div th:if="${currentUser != null and !isOwner and item.status != 'RESOLVED'}" class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold text-primary mb-2"><i class="bi bi-shield-check me-1"></i> Is this yours? Claim Ownership</h5>
+                <p class="small text-muted mb-3">
+                    Provide verifiable details or identifying marks (e.g., sticker details, unique scratches, exact contents, password hint) to verify ownership with the finder or campus administration.
+                </p>
+
+                <form th:action="@{'/lost-found/claim/' + ${item.id}}" method="post">
+                    <div class="mb-3">
+                        <label for="proofDescription" class="form-label fw-semibold small">Proof of Ownership / Distinct Marks *</label>
+                        <textarea id="proofDescription" name="proofDescription" rows="4" class="form-control" placeholder="Describe specific details that only the true owner would know..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        <i class="bi bi-send me-1"></i> Submit Ownership Claim
+                    </button>
+                </form>
+            </div>
+
+            <!-- Login prompt if not signed in -->
+            <div th:if="${currentUser == null}" class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4 text-center">
+                <i class="bi bi-person-lock fs-1 text-primary mb-2"></i>
+                <h5 class="fw-bold mb-1">Want to claim this item?</h5>
+                <p class="small text-muted mb-3">Please sign in with your student or staff account to submit an ownership verification claim.</p>
+                <a th:href="@{/login}" class="btn btn-primary btn-sm">Sign In to Claim</a>
+            </div>
+
+            <!-- 2. Claims Review List (For Reporter & Admin) -->
+            <div th:if="${canVerify}" class="card border-0 shadow-sm rounded-4 bg-white p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-primary mb-0"><i class="bi bi-person-check me-1"></i> Submitted Claims (<span th:text="${claims != null ? claims.size() : 0}">0</span>)</h5>
+                </div>
+
+                <div th:if="${claims == null or claims.isEmpty()}" class="p-3 bg-light text-muted rounded-3 text-center small">
+                    No ownership claims submitted for this item yet.
+                </div>
+
+                <div class="list-group list-group-flush" th:if="${claims != null and !claims.isEmpty()}">
+                    <div th:each="c : ${claims}" class="list-group-item px-0 py-3 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong th:text="${c.claimant.fullName}">Claimant Name</strong>
+                            <span class="badge" th:classappend="${c.status == 'APPROVED' ? 'bg-success' : c.status == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark'}" th:text="${c.status}">PENDING</span>
+                        </div>
+                        <div class="small text-muted mb-2">
+                            <i class="bi bi-envelope me-1"></i> <span th:text="${c.claimant.email}">email</span>
+                            &bull; <i class="bi bi-telephone me-1"></i> <span th:text="${c.claimant.phone}">phone</span>
+                        </div>
+                        <div class="p-2 bg-light rounded-2 small text-secondary mb-2">
+                            <strong>Provided Proof:</strong> <span th:text="${c.proofDescription}">Proof</span>
+                        </div>
+
+                        <!-- Verification Actions -->
+                        <div th:if="${c.status == 'PENDING'}" class="mt-2">
+                            <form th:action="@{'/lost-found/claim/verify/' + ${c.id}}" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="itemId" th:value="${item.id}">
+                                <input type="text" name="adminNotes" class="form-control form-control-sm" placeholder="Notes (e.g. verified ID)">
+                                <button type="submit" name="status" value="APPROVED" class="btn btn-sm btn-success" title="Approve Claim">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                                <button type="submit" name="status" value="REJECTED" class="btn btn-sm btn-outline-danger" title="Reject Claim">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,327 @@
+/* ========================================================
+   Smart Campus Management System - Theme Styles
+   ======================================================== */
+:root {
+    --primary: #9e1b32;       /* Thapar Maroon */
+    --primary-light: #c8283f; /* Bright Red */
+    --primary-dark: #6d1020;
+    --secondary: #c99a2e;     /* Deep Teal */
+    --accent: #f59e0b;        /* Amber */
+    --accent-red: #ef4444;    /* Crimson Alert */
+    --accent-green: #10b981;  /* Emerald */
+    --bg-light: #f8fafc;
+    --card-bg: #ffffff;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header & Navbar */
+.navbar-custom {
+    background: linear-gradient(135deg, #9e1b32 0%, #3a0d14 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff !important;
+}
+
+/* Hero Section */
+.hero-gradient {
+    background: linear-gradient(135deg, #9e1b32 0%, #b32038 50%, #7a1426 100%);
+    color: #ffffff;
+    padding: 4.5rem 1rem 3.5rem;
+    border-radius: 0 0 32px 32px;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-gradient::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+}
+
+/* Metric / Stat Cards */
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Custom Cards */
+.campus-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.campus-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.campus-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    background: #fdfdfe;
+    font-weight: 600;
+}
+
+.campus-card-body {
+    padding: 1.25rem;
+    flex: 1;
+}
+
+.campus-card-footer {
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid var(--border-color);
+    background: #fafbfc;
+}
+
+/* Event Banner */
+.event-banner-img {
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
+    background-color: #cbd5e1;
+}
+
+/* Badges */
+.badge-role {
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.badge-admin { background-color: #fee2e2; color: #b91c1c; }
+.badge-faculty { background-color: #e0e7ff; color: #4338ca; }
+.badge-organizer { background-color: #fef3c7; color: #b45309; }
+.badge-student { background-color: #dcfce7; color: #15803d; }
+
+.badge-urgent {
+    background-color: #ef4444;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Filter Box */
+.filter-box {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Interactive Campus Map View */
+.map-canvas-container {
+    position: relative;
+    background: #fdf2f4;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    min-height: 480px;
+    overflow: hidden;
+}
+
+.map-location-pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 10;
+}
+
+.map-location-pin:hover {
+    transform: translate(-50%, -50%) scale(1.25);
+    z-index: 20;
+}
+
+.map-pin-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #9e1b32;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    border: 2px solid white;
+}
+
+.map-pin-label {
+    background: rgba(15, 23, 42, 0.85);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* Notification Popover */
+.notification-dropdown {
+    width: 340px;
+    max-height: 420px;
+    overflow-y: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+}
+
+.notification-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.15s ease;
+}
+
+.notification-item:hover {
+    background: #f1f5f9;
+}
+
+.notification-item.unread {
+    background: #fdf2f4;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background: #2a0c12;
+    color: #94a3b8;
+    padding: 2.5rem 0 1.5rem;
+}
+
+footer a {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+footer a:hover {
+    color: #ffffff;
+}
+
+/* Table Enhancements */
+.table-custom th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table-custom td {
+    vertical-align: middle;
+}
+
+/* ========================================================
+   Thapar-style red theme: Bootstrap overrides
+   ======================================================== */
+:root {
+    --bs-primary: #9e1b32;
+    --bs-primary-rgb: 158, 27, 50;
+    --bs-link-color: #9e1b32;
+    --bs-link-color-rgb: 158, 27, 50;
+    --bs-link-hover-color: #6d1020;
+    --bs-link-hover-color-rgb: 109, 16, 32;
+}
+.btn-primary {
+    --bs-btn-bg: #9e1b32; --bs-btn-border-color: #9e1b32;
+    --bs-btn-hover-bg: #7f1528; --bs-btn-hover-border-color: #7f1528;
+    --bs-btn-active-bg: #6d1020; --bs-btn-active-border-color: #6d1020;
+    --bs-btn-disabled-bg: #9e1b32; --bs-btn-disabled-border-color: #9e1b32;
+    --bs-btn-focus-shadow-rgb: 158, 27, 50;
+}
+.btn-outline-primary {
+    --bs-btn-color: #9e1b32; --bs-btn-border-color: #9e1b32;
+    --bs-btn-hover-bg: #9e1b32; --bs-btn-hover-border-color: #9e1b32;
+    --bs-btn-active-bg: #7f1528; --bs-btn-active-border-color: #7f1528;
+    --bs-btn-focus-shadow-rgb: 158, 27, 50;
+}
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+    border-color: #c8283f;
+    box-shadow: 0 0 0 0.2rem rgba(158, 27, 50, 0.2);
+}
+.form-check-input:checked { background-color: #9e1b32; border-color: #9e1b32; }
+.page-item.active .page-link { background-color: #9e1b32; border-color: #9e1b32; }
+.page-link { color: #9e1b32; }
+.nav-pills .nav-link.active, .list-group-item.active { background-color: #9e1b32; border-color: #9e1b32; }
+.bg-info { background-color: #c99a2e !important; }
+.text-info { color: #c99a2e !important; }

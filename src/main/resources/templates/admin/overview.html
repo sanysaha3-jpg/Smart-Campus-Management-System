@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('System Overview & Analytics')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container-fluid px-lg-5 py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-speedometer2 text-warning me-2"></i> Campus System Analytics & Overview</h3>
+            <p class="text-muted small mb-0">Live statistics across all 8 modules of the Smart Campus Management System.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/admin/users}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-people me-1"></i> User Roster
+            </a>
+            <a th:href="@{/rooms/manage}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-door-open me-1"></i> Room Schedule
+            </a>
+        </div>
+    </div>
+
+    <!-- Core Metrics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-primary" th:text="${totalUsers}">5</div>
+                <div class="small text-muted fw-semibold">TOTAL USERS</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-success" th:text="${totalEvents}">4</div>
+                <div class="small text-muted fw-semibold">CAMPUS EVENTS</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-info" th:text="${totalRooms}">6</div>
+                <div class="small text-muted fw-semibold">ROOMS & LABS</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-warning" th:text="${totalBookings}">2</div>
+                <div class="small text-muted fw-semibold">RESERVATIONS</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-danger" th:text="${totalComplaints}">3</div>
+                <div class="small text-muted fw-semibold">MAINTENANCE TICKETS</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card text-center">
+                <div class="fs-2 fw-bold text-secondary" th:text="${totalLostItems}">3</div>
+                <div class="small text-muted fw-semibold">LOST & FOUND</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Demographics & Module Distribution -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-pie-chart-fill text-info me-2"></i> User Account Distribution</h5>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 text-center border">
+                            <span class="badge bg-success mb-2">STUDENTS</span>
+                            <div class="fs-3 fw-bold text-dark" th:text="${students}">2</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 text-center border">
+                            <span class="badge bg-indigo text-white mb-2" style="background-color: #4338ca;">FACULTY</span>
+                            <div class="fs-3 fw-bold text-dark" th:text="${faculty}">1</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 text-center border">
+                            <span class="badge bg-warning text-dark mb-2">ORGANIZERS</span>
+                            <div class="fs-3 fw-bold text-dark" th:text="${organizers}">1</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 text-center border">
+                            <span class="badge bg-danger mb-2">ADMINISTRATORS</span>
+                            <div class="fs-3 fw-bold text-dark" th:text="${admins}">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-cpu-fill text-warning me-2"></i> System Health & Database</h5>
+                <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
+                    <li class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                        <span class="text-muted"><i class="bi bi-database me-2 text-primary"></i> Database Engine:</span>
+                        <strong class="text-dark">MySQL 8.0 & Hibernate 6</strong>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                        <span class="text-muted"><i class="bi bi-shield-check me-2 text-success"></i> Conflict Prevention Logic:</span>
+                        <span class="badge bg-success">ACTIVE & VERIFIED</span>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                        <span class="text-muted"><i class="bi bi-clock-history me-2 text-info"></i> Session Management:</span>
+                        <strong class="text-dark">HTTP Session & AuthInterceptor</strong>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                        <span class="text-muted"><i class="bi bi-bell-fill me-2 text-warning"></i> Push Reminders:</span>
+                        <span class="badge bg-info">Real-Time In-App Center</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

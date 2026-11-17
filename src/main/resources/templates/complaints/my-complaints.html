@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Maintenance Tickets')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-tools text-danger me-2"></i> My Maintenance Tickets</h3>
+            <p class="text-muted small mb-0">Track status and technician remarks on issues you have reported.</p>
+        </div>
+        <a th:href="@{/complaints/report}" class="btn btn-danger btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> Report New Issue
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Subject</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Priority</th>
+                        <th>Reported On</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${complaints.isEmpty()}">
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-check2-circle fs-1 d-block mb-2 text-success"></i>
+                            You have no open maintenance tickets.
+                            <div class="mt-2">
+                                <a th:href="@{/complaints/report}" class="btn btn-danger btn-sm">Report a Maintenance Issue</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="c : ${complaints}">
+                        <td><strong class="text-muted" th:text="'#' + ${c.id}">#1</strong></td>
+                        <td>
+                            <a th:href="@{'/complaints/view/' + ${c.id}}" class="fw-bold text-decoration-none text-dark" th:text="${c.title}">Title</a>
+                        </td>
+                        <td><span class="badge bg-light text-secondary border small" th:text="${c.category}">WIFI</span></td>
+                        <td class="small" th:text="${c.location}">Location</td>
+                        <td>
+                            <span class="badge" th:classappend="${c.priority == 'URGENT' ? 'bg-danger' : c.priority == 'HIGH' ? 'bg-warning text-dark' : 'bg-secondary'}" th:text="${c.priority}">HIGH</span>
+                        </td>
+                        <td class="small text-muted" th:text="${#temporals.format(c.createdAt, 'dd MMM yyyy')}">Date</td>
+                        <td>
+                            <span class="badge" th:classappend="${c.status == 'RESOLVED' ? 'bg-success' : c.status == 'IN_PROGRESS' ? 'bg-info' : 'bg-warning text-dark'}" th:text="${c.status}">PENDING</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/complaints/view/' + ${c.id}}" class="btn btn-sm btn-outline-primary">Track Details &rarr;</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

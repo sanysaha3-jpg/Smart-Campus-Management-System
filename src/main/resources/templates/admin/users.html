@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('User Management')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container-fluid px-lg-5 py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-people-fill text-warning me-2"></i> User & Role Management</h3>
+            <p class="text-muted small mb-0">Oversee student, faculty, organizer, and administrator accounts across the college campus.</p>
+        </div>
+        <a th:href="@{/admin/overview}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-speedometer2 me-1"></i> System Analytics
+        </a>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-5">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Email & Phone</th>
+                        <th>Department</th>
+                        <th>Campus ID</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Modify Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${u.id}">1</td>
+                        <td>
+                            <strong th:text="${u.fullName}">Full Name</strong>
+                            <div class="small text-muted" th:text="'@' + ${u.username}">@user</div>
+                        </td>
+                        <td class="small">
+                            <div th:text="${u.email}">email@campus.edu</div>
+                            <div class="text-muted" th:text="${u.phone}">phone</div>
+                        </td>
+                        <td class="small" th:text="${u.department != null ? u.department : 'General'}">Computer Science</td>
+                        <td class="small text-muted" th:text="${u.studentOrFacultyId != null ? u.studentOrFacultyId : 'N/A'}">ID</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${u.role.name() == 'ADMIN' ? 'bg-danger' :
+                                                  u.role.name() == 'FACULTY' ? 'bg-indigo text-white' :
+                                                  u.role.name() == 'ORGANIZER' ? 'bg-warning text-dark' : 'bg-success'}"
+                                  th:text="${u.role}">STUDENT</span>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${u.active ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}"
+                                  th:text="${u.active ? 'Active' : 'Disabled'}">Active</span>
+                        </td>
+                        <td>
+                            <form th:action="@{'/admin/users/role/' + ${u.id}}" method="post" class="d-flex gap-1">
+                                <select name="role" class="form-select form-select-sm" style="width: 130px;">
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${u.role == r}">ROLE</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Update Role">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{'/admin/users/toggle/' + ${u.id}}" method="post">
+                                <button type="submit" class="btn btn-sm"
+                                        th:classappend="${u.active ? 'btn-outline-danger' : 'btn-outline-success'}"
+                                        th:text="${u.active ? 'Disable' : 'Enable'}">
+                                    Disable
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

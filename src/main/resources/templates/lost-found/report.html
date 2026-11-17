@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Report Lost or Found Item')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
+                <div class="p-4 text-white" style="background: linear-gradient(135deg, #c99a2e 0%, #9e1b32 100%);">
+                    <h3 class="fw-bold mb-1"><i class="bi bi-box-seam me-2"></i> Report Lost or Found Item</h3>
+                    <p class="small text-white-50 mb-0">List a misplaced item you lost, or report an item you found on campus</p>
+                </div>
+
+                <div class="p-4 p-md-5">
+                    <form th:action="@{/lost-found/report}" th:object="${item}" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="type" class="form-label fw-semibold">Report Type *</label>
+                                <select th:field="*{type}" id="type" class="form-select" required>
+                                    <option value="LOST">I LOST an item (Help me find it)</option>
+                                    <option value="FOUND">I FOUND an item (Looking for owner)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="category" class="form-label fw-semibold">Item Category *</label>
+                                <select th:field="*{category}" id="category" class="form-select" required>
+                                    <option value="ELECTRONICS">Electronics & Gadgets</option>
+                                    <option value="ID_CARD">ID Cards & Passes</option>
+                                    <option value="BOOKS_STATIONERY">Books & Notebooks</option>
+                                    <option value="KEYS">Keys & Keychains</option>
+                                    <option value="BAGS_WALLETS">Bags & Wallets</option>
+                                    <option value="CLOTHING">Clothing & Accessories</option>
+                                    <option value="OTHER">Other Belongings</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="title" class="form-label fw-semibold">Item Title / Headline *</label>
+                                <input type="text" th:field="*{title}" id="title" class="form-control" placeholder="e.g. Lost Blue Dell Laptop Charger, Found Fastrack Watch" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="location" class="form-label fw-semibold">Location (Where lost / found) *</label>
+                                <input type="text" th:field="*{location}" id="location" class="form-control" placeholder="e.g. Library 2nd Floor, Cafeteria Counter" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="itemDate" class="form-label fw-semibold">Date *</label>
+                                <input type="date" th:field="*{itemDate}" id="itemDate" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="contactPhone" class="form-label fw-semibold">Contact Phone Number</label>
+                                <input type="tel" th:field="*{contactPhone}" id="contactPhone" class="form-control" placeholder="9876543210">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="contactEmail" class="form-label fw-semibold">Contact Email</label>
+                                <input type="email" th:field="*{contactEmail}" id="contactEmail" class="form-control" placeholder="user@campus.edu">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="photoUrl" class="form-label fw-semibold">Item Photo URL (Optional)</label>
+                                <input type="url" th:field="*{photoUrl}" id="photoUrl" class="form-control" placeholder="https://...">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="description" class="form-label fw-semibold">Detailed Description & Identifying Marks *</label>
+                                <textarea th:field="*{description}" id="description" rows="4" class="form-control" placeholder="Provide distinct characteristics like color, stickers, model, serial number hint, contents..." required></textarea>
+                            </div>
+
+                            <div class="col-12 mt-4 text-end">
+                                <a th:href="@{/lost-found}" class="btn btn-outline-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                    <i class="bi bi-check-circle me-1"></i> Submit Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Sign In')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #9e1b32 0%, #b32038 100%);">
+                    <i class="bi bi-mortarboard-fill fs-1 text-warning mb-2"></i>
+                    <h3 class="fw-bold mb-1">Campus Portal Login</h3>
+                    <p class="small text-white-50 mb-0">Sign in with your campus credentials</p>
+                </div>
+
+                <div class="p-4 p-md-5 bg-white">
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                                <input type="text" id="username" name="username" class="form-control border-start-0" placeholder="e.g. student, admin" required autofocus>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                                <input type="password" id="password" name="password" class="form-control border-start-0" placeholder="Enter password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm mb-4">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Portal
+                        </button>
+                    </form>
+
+                    <!-- Quick Demo Credentials 1-Click Buttons -->
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="small fw-bold text-muted mb-2 text-center text-uppercase" style="letter-spacing: 0.5px;">
+                            <i class="bi bi-lightning-charge-fill text-warning"></i> One-Click Demo Logins
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-demo-user="admin">
+                                    <i class="bi bi-shield-lock me-1"></i> Admin
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-success btn-sm w-100" data-demo-user="student">
+                                    <i class="bi bi-mortarboard me-1"></i> Student
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100" data-demo-user="faculty">
+                                    <i class="bi bi-person-workspace me-1"></i> Faculty
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-warning text-dark btn-sm w-100" data-demo-user="organizer">
+                                    <i class="bi bi-stars me-1"></i> Organizer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center small text-muted">
+                        Don't have an account yet?
+                        <a th:href="@{/register}" class="text-primary fw-semibold text-decoration-none">Register here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

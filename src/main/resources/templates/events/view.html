@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${event.title})}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="mb-3">
+        <a th:href="@{/events}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Events
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Event Details -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
+                <img th:if="${event.bannerUrl != null and !event.bannerUrl.isEmpty()}" th:src="${event.bannerUrl}" style="height: 320px; width: 100%; object-fit: cover;" alt="Event Banner">
+                <div class="p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary px-3 py-2 rounded-pill fw-bold" th:text="${event.category}">HACKATHON</span>
+                        <span class="badge" th:classappend="${event.status == 'UPCOMING' ? 'bg-success' : 'bg-danger'}" th:text="${event.status}">UPCOMING</span>
+                    </div>
+
+                    <h2 class="fw-bold text-dark mb-3" th:text="${event.title}">Event Title</h2>
+
+                    <div class="row g-3 py-3 my-3 bg-light rounded-3 border">
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-calendar3 text-primary me-1"></i> Date</small>
+                            <strong th:text="${event.eventDate}">2026-11-20</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-clock text-primary me-1"></i> Timing</small>
+                            <strong th:text="${event.startTime} + ' - ' + ${event.endTime}">09:00 - 18:00</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-geo-alt text-danger me-1"></i> Venue</small>
+                            <strong th:text="${event.venue}">Turing Lab</strong>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted d-block"><i class="bi bi-people text-info me-1"></i> Capacity</small>
+                            <strong th:text="${event.currentParticipants} + ' / ' + ${event.maxParticipants}">45 / 100</strong>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary mb-2">Event Overview & Description</h5>
+                    <p class="text-secondary leading-relaxed" style="white-space: pre-line;" th:text="${event.description}">
+                        Detailed description of the campus event.
+                    </p>
+
+                    <div class="mt-4 pt-4 border-top d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <span class="text-muted small">Department: </span>
+                            <strong th:text="${event.department}">Computer Science</strong>
+                        </div>
+
+                        <!-- Registration Action Buttons -->
+                        <div>
+                            <!-- User is registered -->
+                            <div th:if="${isRegistered}" class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle p-2">
+                                    <i class="bi bi-check-circle-fill me-1"></i> You are registered
+                                </span>
+                            </div>
+
+                            <!-- User not registered & event open -->
+                            <form th:if="${!isRegistered and !event.isFull() and event.status == 'UPCOMING'}"
+                                  th:action="@{'/events/register/' + ${event.id}}" method="post">
+                                <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                                    <i class="bi bi-ticket-perforated me-1"></i> Register for Event Now
+                                </button>
+                            </form>
+
+                            <!-- Event full -->
+                            <div th:if="${!isRegistered and event.isFull() and event.status == 'UPCOMING'}">
+                                <button class="btn btn-secondary px-4 py-2" disabled>Capacity Full</button>
+                            </div>
+
+                            <!-- Cancelled event -->
+                            <div th:if="${event.status == 'CANCELLED'}">
+                                <span class="badge bg-danger p-2">Event Cancelled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendee Management Roster (for Organizer / Admin) -->
+            <div th:if="${canManage}" class="card border-0 shadow-sm rounded-4 bg-white p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-primary mb-0"><i class="bi bi-people-fill me-2"></i> Registered Attendees Roster (<span th:text="${attendees != null ? attendees.size() : 0}">0</span>)</h5>
+                    <div class="btn-group btn-group-sm">
+                        <a th:href="@{'/events/edit/' + ${event.id}}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Edit Event</a>
+                        <form th:if="${event.status == 'UPCOMING'}" th:action="@{'/events/cancel/' + ${event.id}}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Cancel this event and notify all registered students?')">
+                                <i class="bi bi-x-circle me-1"></i> Cancel Event
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Attendee Name</th>
+                                <th>Email</th>
+                                <th>Role / ID</th>
+                                <th>Registration Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${attendees == null or attendees.isEmpty()}">
+                                <td colspan="5" class="text-center py-3 text-muted">No registrations yet.</td>
+                            </tr>
+                            <tr th:each="att, iter : ${attendees}">
+                                <td th:text="${iter.count}">1</td>
+                                <td><strong th:text="${att.user.fullName}">Name</strong></td>
+                                <td class="small" th:text="${att.user.email}">email@campus.edu</td>
+                                <td class="small" th:text="${att.user.role} + (${att.user.studentOrFacultyId != null ? ' (' + att.user.studentOrFacultyId + ')' : ''})">STUDENT</td>
+                                <td class="small text-muted" th:text="${#temporals.format(att.registrationDate, 'dd MMM yyyy HH:mm')}">15 Nov</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar / Organizer Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <h6 class="fw-bold text-muted text-uppercase mb-3" style="letter-spacing: 0.5px;">Organized By</h6>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 52px; height: 52px;">
+                        <span th:text="${event.organizer != null ? event.organizer.fullName.substring(0, 1) : 'O'}">O</span>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark" th:text="${event.organizer != null ? event.organizer.fullName : 'Campus Council'}">Organizer</h6>
+                        <small class="text-muted" th:text="${event.organizer != null ? event.organizer.email : 'events@campus.edu'}">email@campus.edu</small>
+                    </div>
+                </div>
+                <div class="small text-secondary mb-3">
+                    <i class="bi bi-briefcase me-1"></i> <span th:text="${event.organizer != null ? event.organizer.department : 'Campus Activity Board'}">Department</span>
+                </div>
+                <div class="p-3 bg-light rounded-3 small text-muted">
+                    <i class="bi bi-shield-check text-success me-1"></i> Verified official campus activity. Attendance hours recorded for student co-curricular credits.
+                </div>
+            </div>
+
+            <!-- Quick Guidelines -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle text-primary me-2"></i> Event Guidelines</h6>
+                <ul class="small text-muted ps-3 mb-0 d-flex flex-column gap-2">
+                    <li>Please bring your Campus ID Card for physical entry verification at the venue.</li>
+                    <li>Registrations are on a first-come, first-served basis according to room capacity.</li>
+                    <li>If unable to attend, please cancel your registration in advance to release the seat.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

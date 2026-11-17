@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Publish Announcement')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
+                <div class="p-4 bg-primary text-white">
+                    <h3 class="fw-bold mb-1"><i class="bi bi-megaphone me-2"></i> Publish Official Announcement</h3>
+                    <p class="small text-white-50 mb-0">Post circulars, timetable revisions, or broadcast urgent emergency alerts across campus</p>
+                </div>
+
+                <div class="p-4 p-md-5">
+                    <form th:action="@{/notices/create}" th:object="${notice}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="title" class="form-label fw-semibold">Notice Title *</label>
+                                <input type="text" th:field="*{title}" id="title" class="form-control" placeholder="e.g. Schedule for Mid-Term Examination" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="category" class="form-label fw-semibold">Category *</label>
+                                <select th:field="*{category}" id="category" class="form-select" required>
+                                    <option value="ACADEMIC">Academic</option>
+                                    <option value="EXAM">Examination</option>
+                                    <option value="TIMETABLE">Timetable & Classes</option>
+                                    <option value="EVENT">Event / Fest</option>
+                                    <option value="URGENT_ALERT">Urgent Alert</option>
+                                    <option value="GENERAL">General Notice</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="targetAudience" class="form-label fw-semibold">Target Audience *</label>
+                                <select th:field="*{targetAudience}" id="targetAudience" class="form-select" required>
+                                    <option value="ALL">Everyone (All Campus)</option>
+                                    <option value="STUDENTS">Students Only</option>
+                                    <option value="FACULTY">Faculty & Staff Only</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="department" class="form-label fw-semibold">Issuing Department</label>
+                                <input type="text" th:field="*{department}" id="department" class="form-control" placeholder="e.g. Examination Cell, IT Support">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="expiresAt" class="form-label fw-semibold">Expiry Date</label>
+                                <input type="date" th:field="*{expiresAt}" id="expiresAt" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" th:field="*{urgent}" id="urgentSwitch">
+                                    <label class="form-check-label fw-bold text-danger" for="urgentSwitch">
+                                        🚨 Mark as Urgent Campus Alert (Broadcasts ticker to all users immediately)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="content" class="form-label fw-semibold">Notice Content & Full Text *</label>
+                                <textarea th:field="*{content}" id="content" rows="6" class="form-control" placeholder="Write the announcement body..." required></textarea>
+                            </div>
+
+                            <div class="col-12 mt-4 text-end">
+                                <a th:href="@{/notices}" class="btn btn-outline-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                    <i class="bi bi-send me-1"></i> Publish Notice
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

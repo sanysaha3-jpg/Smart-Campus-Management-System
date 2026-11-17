@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="alerts">
+    <!-- Urgent Campus Alert Banner -->
+    <div th:if="${urgentNotices != null and !urgentNotices.isEmpty()}" class="bg-danger text-white py-2 px-3 shadow-sm">
+        <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-white text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> CAMPUS ALERT</span>
+                <span th:text="${urgentNotices[0].title}">Scheduled maintenance tonight</span>
+            </div>
+            <a th:href="@{/notices}" class="btn btn-sm btn-outline-light py-0">View Details &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Flash Success Message -->
+    <div th:if="${successMessage}" class="container-fluid px-lg-4 mt-3">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill fs-5 me-2 text-success"></i>
+            <div th:text="${successMessage}">Operation successful!</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <!-- Flash Error Message -->
+    <div th:if="${errorMessage}" class="container-fluid px-lg-4 mt-3">
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-octagon-fill fs-5 me-2 text-danger"></i>
+            <div th:text="${errorMessage}">An error occurred.</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

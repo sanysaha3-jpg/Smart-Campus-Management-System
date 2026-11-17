@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Lost & Found')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-box-seam-fill text-warning me-2"></i> My Reported Items & Claims</h3>
+            <p class="text-muted small mb-0">Track belongings you have posted or claims you have submitted to finders.</p>
+        </div>
+        <a th:href="@{/lost-found/report}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> Report Another Item
+        </a>
+    </div>
+
+    <!-- Items Reported by Me -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-5">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-list-check me-2"></i> Items Reported By Me</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Item Title</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${myReportedItems.isEmpty()}">
+                        <td colspan="7" class="text-center py-4 text-muted">You have not reported any items.</td>
+                    </tr>
+                    <tr th:each="i : ${myReportedItems}">
+                        <td>
+                            <span class="badge" th:classappend="${i.type == 'LOST' ? 'bg-danger' : 'bg-success'}" th:text="${i.type}">LOST</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/lost-found/view/' + ${i.id}}" class="fw-bold text-decoration-none text-dark" th:text="${i.title}">Title</a>
+                        </td>
+                        <td class="small" th:text="${i.category}">ELECTRONICS</td>
+                        <td class="small" th:text="${i.location}">Location</td>
+                        <td class="small" th:text="${i.itemDate}">2026-11-14</td>
+                        <td>
+                            <span class="badge" th:classappend="${i.status == 'RESOLVED' ? 'bg-secondary' : i.status == 'CLAIMED' ? 'bg-info' : 'bg-warning text-dark'}" th:text="${i.status}">REPORTED</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/lost-found/view/' + ${i.id}}" class="btn btn-sm btn-outline-primary">View & Manage</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Claims Submitted by Me -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-hand-index me-2"></i> Ownership Claims Filed By Me</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Item</th>
+                        <th>Location Found</th>
+                        <th>Proof Description</th>
+                        <th>Claim Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${myClaims.isEmpty()}">
+                        <td colspan="6" class="text-center py-4 text-muted">You have not submitted any ownership claims.</td>
+                    </tr>
+                    <tr th:each="c : ${myClaims}">
+                        <td>
+                            <a th:href="@{'/lost-found/view/' + ${c.item.id}}" class="fw-bold text-decoration-none text-dark" th:text="${c.item.title}">Item Title</a>
+                        </td>
+                        <td class="small" th:text="${c.item.location}">Location</td>
+                        <td class="small text-truncate" style="max-width: 250px;" th:text="${c.proofDescription}">Proof</td>
+                        <td class="small text-muted" th:text="${#temporals.format(c.claimDate, 'dd MMM yyyy HH:mm')}">Date</td>
+                        <td>
+                            <span class="badge" th:classappend="${c.status == 'APPROVED' ? 'bg-success' : c.status == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark'}" th:text="${c.status}">PENDING</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/lost-found/view/' + ${c.item.id}}" class="btn btn-sm btn-outline-secondary">View Item</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Dashboard')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container-fluid px-lg-5 py-4">
+
+    <!-- User Welcome Banner -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-3" style="width: 58px; height: 58px;">
+                    <span th:text="${user.fullName.substring(0, 1)}">U</span>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-primary">Welcome, <span th:text="${user.fullName}">Aarav Mehta</span>!</h3>
+                    <div class="text-muted small">
+                        <span class="badge"
+                              th:classappend="${user.role.name() == 'ADMIN' ? 'bg-danger' :
+                                              user.role.name() == 'FACULTY' ? 'bg-indigo text-white' :
+                                              user.role.name() == 'ORGANIZER' ? 'bg-warning text-dark' : 'bg-success'}"
+                              th:text="${user.role}">STUDENT</span>
+                        &bull; <span th:text="${user.department}">Computer Science</span>
+                        <span th:if="${user.studentOrFacultyId != null and !user.studentOrFacultyId.isEmpty()}" th:text="' &bull; ID: ' + ${user.studentOrFacultyId}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <a th:href="@{/events}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-calendar-event me-1"></i> Browse Events
+                </a>
+                <a th:href="@{/rooms}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-door-open me-1"></i> Book Room
+                </a>
+                <a th:href="@{/complaints/report}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-wrench me-1"></i> Report Complaint
+                </a>
+                <a th:href="@{/lost-found/report}" class="btn btn-outline-warning text-dark btn-sm">
+                    <i class="bi bi-box-seam me-1"></i> Report Lost/Found
+                </a>
+                <a th:if="${user.role.name() == 'ADMIN' or user.role.name() == 'ORGANIZER' or user.role.name() == 'FACULTY'}"
+                   th:href="@{/events/create}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Create Event
+                </a>
+                <a th:if="${user.role.name() == 'ADMIN' or user.role.name() == 'FACULTY'}"
+                   th:href="@{/notices/create}" class="btn btn-info text-dark btn-sm">
+                    <i class="bi bi-megaphone me-1"></i> Post Notice
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 1. ADMIN DASHBOARD VIEW                        -->
+    <!-- ============================================== -->
+    <div th:if="${user.role.name() == 'ADMIN'}">
+        <h4 class="fw-bold text-dark mb-3"><i class="bi bi-speedometer2 text-primary me-2"></i> Campus Administration Overview</h4>
+        <!-- Admin Stats Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center">
+                    <div class="fs-3 fw-bold text-primary" th:text="${allUsersCount}">5</div>
+                    <div class="small text-muted">Registered Users</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center">
+                    <div class="fs-3 fw-bold text-success" th:text="${allEventsCount}">4</div>
+                    <div class="small text-muted">Campus Events</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center">
+                    <div class="fs-3 fw-bold text-info" th:text="${allBookingsCount}">2</div>
+                    <div class="small text-muted">Room Bookings</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center">
+                    <div class="fs-3 fw-bold text-danger" th:text="${allComplaintsCount}">3</div>
+                    <div class="small text-muted">Maintenance Tickets</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center">
+                    <div class="fs-3 fw-bold text-warning" th:text="${allLostItemsCount}">3</div>
+                    <div class="small text-muted">Lost/Found Items</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="stat-card text-center bg-primary text-white border-0">
+                    <a th:href="@{/admin/users}" class="text-white text-decoration-none">
+                        <i class="bi bi-people-fill fs-3"></i>
+                        <div class="small fw-bold">Manage Users &rarr;</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- Recent Maintenance Tickets -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-tools me-2 text-danger"></i> Recent Maintenance Tickets</h6>
+                        <a th:href="@{/complaints}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ticket</th>
+                                        <th>Location</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="c : ${recentComplaints}">
+                                        <td>
+                                            <div class="fw-semibold text-truncate" style="max-width: 140px;" th:text="${c.title}">Title</div>
+                                            <small class="text-muted" th:text="${c.category}">ELECTRICAL</small>
+                                        </td>
+                                        <td class="small" th:text="${c.location}">Location</td>
+                                        <td>
+                                            <span class="badge" th:classappend="${c.priority == 'URGENT' ? 'bg-danger' : c.priority == 'HIGH' ? 'bg-warning text-dark' : 'bg-secondary'}" th:text="${c.priority}">HIGH</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="${c.status == 'RESOLVED' ? 'bg-success' : c.status == 'IN_PROGRESS' ? 'bg-info' : 'bg-warning text-dark'}" th:text="${c.status}">PENDING</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{'/complaints/view/' + ${c.id}}" class="btn btn-sm btn-outline-secondary">Review</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Room Reservations -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-calendar2-range me-2 text-info"></i> Recent Room Reservations</h6>
+                        <a th:href="@{/rooms/manage}" class="btn btn-sm btn-outline-primary">Manage Rooms</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Room</th>
+                                        <th>Reserved By</th>
+                                        <th>Date & Slot</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="b : ${recentBookings}">
+                                        <td>
+                                            <strong th:text="${b.room.roomNumber}">Room 101</strong>
+                                            <div class="small text-muted" th:text="${b.room.building}">Block A</div>
+                                        </td>
+                                        <td class="small" th:text="${b.user.fullName}">User Name</td>
+                                        <td class="small">
+                                            <div th:text="${b.bookingDate}">2026-11-20</div>
+                                            <div class="text-muted" th:text="${b.startTime} + ' - ' + ${b.endTime}">10:00 - 12:00</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'bg-success' : b.status == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark'}" th:text="${b.status}">CONFIRMED</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 2. ORGANIZER DASHBOARD VIEW                    -->
+    <!-- ============================================== -->
+    <div th:if="${user.role.name() == 'ORGANIZER'}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-stars text-warning me-2"></i> My Managed Campus Events</h4>
+            <a th:href="@{/events/create}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Create New Event
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Category</th>
+                            <th>Date & Time</th>
+                            <th>Venue</th>
+                            <th>Registrations</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${myEvents.isEmpty()}">
+                            <td colspan="7" class="text-center py-4 text-muted">You haven't created any events yet. Click "Create New Event" above!</td>
+                        </tr>
+                        <tr th:each="e : ${myEvents}">
+                            <td>
+                                <strong th:text="${e.title}">Hackathon</strong>
+                            </td>
+                            <td><span class="badge bg-secondary" th:text="${e.category}">HACKATHON</span></td>
+                            <td class="small">
+                                <div th:text="${e.eventDate}">2026-11-20</div>
+                                <div class="text-muted" th:text="${e.startTime} + ' - ' + ${e.endTime}">09:00 - 18:00</div>
+                            </td>
+                            <td class="small" th:text="${e.venue}">Venue</td>
+                            <td>
+                                <span class="badge bg-info-subtle text-info fs-6">
+                                    <span th:text="${e.currentParticipants}">0</span> / <span th:text="${e.maxParticipants}">100</span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="${e.status == 'UPCOMING' ? 'bg-success' : 'bg-danger'}" th:text="${e.status}">UPCOMING</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a th:href="@{'/events/view/' + ${e.id}}" class="btn btn-outline-secondary">Attendees</a>
+                                    <a th:href="@{'/events/edit/' + ${e.id}}" class="btn btn-outline-primary">Edit</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 3. STUDENT & FACULTY DASHBOARD VIEW            -->
+    <!-- ============================================== -->
+    <div th:if="${user.role.name() == 'STUDENT' or user.role.name() == 'FACULTY'}">
+        <div class="row g-4">
+
+            <!-- Left Column: My Registrations & Bookings -->
+            <div class="col-lg-7">
+                <!-- My Event Registrations -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary">
+                            <i class="bi bi-ticket-perforated-fill text-warning me-2"></i> My Event Registrations
+                        </h6>
+                        <a th:href="@{/events}" class="btn btn-sm btn-outline-primary">Explore More</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>Date & Venue</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${myRegistrations.isEmpty()}">
+                                        <td colspan="4" class="text-center py-4 text-muted">You have not registered for any events yet.</td>
+                                    </tr>
+                                    <tr th:each="r : ${myRegistrations}">
+                                        <td>
+                                            <a th:href="@{'/events/view/' + ${r.event.id}}" class="fw-semibold text-decoration-none text-dark" th:text="${r.event.title}">Event Name</a>
+                                            <div class="small text-muted" th:text="${r.event.category}">WORKSHOP</div>
+                                        </td>
+                                        <td class="small">
+                                            <div th:text="${r.event.eventDate}">2026-11-20</div>
+                                            <div class="text-muted" th:text="${r.event.venue}">Venue</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge" th:classappend="${r.status == 'REGISTERED' ? 'bg-success' : 'bg-danger'}" th:text="${r.status}">REGISTERED</span>
+                                        </td>
+                                        <td>
+                                            <form th:if="${r.status == 'REGISTERED'}" th:action="@{'/events/cancel-registration/' + ${r.id}}" method="post">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this registration?')">Cancel</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Room Bookings -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary">
+                            <i class="bi bi-clock-history text-info me-2"></i> My Room Reservations
+                        </h6>
+                        <a th:href="@{/rooms}" class="btn btn-sm btn-outline-primary">Book a Room</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Room</th>
+                                        <th>Schedule</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${myBookings.isEmpty()}">
+                                        <td colspan="5" class="text-center py-4 text-muted">No room reservations found.</td>
+                                    </tr>
+                                    <tr th:each="b : ${myBookings}">
+                                        <td>
+                                            <strong th:text="${b.room.roomNumber}">Room 101</strong>
+                                            <div class="small text-muted" th:text="${b.room.building}">Block A</div>
+                                        </td>
+                                        <td class="small">
+                                            <div th:text="${b.bookingDate}">2026-11-20</div>
+                                            <div class="text-muted" th:text="${b.startTime} + ' - ' + ${b.endTime}">10:00 - 12:00</div>
+                                        </td>
+                                        <td class="small text-truncate" style="max-width: 140px;" th:text="${b.purpose}">Group Study</td>
+                                        <td>
+                                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'bg-success' : 'bg-danger'}" th:text="${b.status}">CONFIRMED</span>
+                                        </td>
+                                        <td>
+                                            <form th:if="${b.status == 'CONFIRMED'}" th:action="@{'/rooms/cancel/' + ${b.id}}" method="post">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this room booking?')">Cancel</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: My Maintenance Tickets & Lost/Found -->
+            <div class="col-lg-5">
+                <!-- My Complaints -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary">
+                            <i class="bi bi-wrench-adjustable text-danger me-2"></i> My Maintenance Tickets
+                        </h6>
+                        <a th:href="@{/complaints/report}" class="btn btn-sm btn-outline-danger">+ New Ticket</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div th:if="${myComplaints.isEmpty()}" class="p-4 text-center text-muted small">
+                                No maintenance issues reported.
+                            </div>
+                            <a th:each="c : ${myComplaints}" th:href="@{'/complaints/view/' + ${c.id}}" class="list-group-item list-group-item-action p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge" th:classappend="${c.status == 'RESOLVED' ? 'bg-success' : c.status == 'IN_PROGRESS' ? 'bg-info' : 'bg-warning text-dark'}" th:text="${c.status}">PENDING</span>
+                                    <small class="text-muted" th:text="${c.category}">WIFI</small>
+                                </div>
+                                <h6 class="mb-1 fw-bold text-dark" th:text="${c.title}">Complaint Title</h6>
+                                <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i> <span th:text="${c.location}">Library</span></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Lost & Found Items -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-primary">
+                            <i class="bi bi-box-seam text-warning me-2"></i> My Reported Items & Claims
+                        </h6>
+                        <a th:href="@{/lost-found/report}" class="btn btn-sm btn-outline-warning text-dark">+ Report</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div th:if="${myItems.isEmpty() and myClaims.isEmpty()}" class="p-4 text-center text-muted small">
+                                No lost or found items reported by you.
+                            </div>
+                            <a th:each="item : ${myItems}" th:href="@{'/lost-found/view/' + ${item.id}}" class="list-group-item list-group-item-action p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge" th:classappend="${item.type == 'LOST' ? 'bg-danger' : 'bg-success'}" th:text="${item.type}">LOST</span>
+                                    <span class="badge bg-light text-dark border" th:text="${item.status}">REPORTED</span>
+                                </div>
+                                <h6 class="mb-1 fw-bold text-dark" th:text="${item.title}">Item Name</h6>
+                                <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i> <span th:text="${item.location}">Location</span></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

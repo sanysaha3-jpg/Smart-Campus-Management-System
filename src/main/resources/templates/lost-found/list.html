@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Lost & Found Portal')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container-fluid px-lg-5 py-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-1"><i class="bi bi-box-seam-fill text-warning me-2"></i> Campus Lost & Found Registry</h2>
+            <p class="text-muted small mb-0">Report misplaced belongings, browse discovered items, submit ownership claims, and recover lost goods.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/lost-found/my-items}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-person-lines-fill me-1"></i> My Reported & Claims
+            </a>
+            <a th:href="@{/lost-found/report}" class="btn btn-warning text-dark fw-bold btn-sm shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Report an Item
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-box">
+        <form th:action="@{/lost-found}" method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Item Type</label>
+                <select name="type" class="form-select">
+                    <option value="">All Types (Lost & Found)</option>
+                    <option value="LOST" th:selected="${type == 'LOST'}">Lost Items</option>
+                    <option value="FOUND" th:selected="${type == 'FOUND'}">Found Items</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="ELECTRONICS" th:selected="${category == 'ELECTRONICS'}">Electronics & Gadgets</option>
+                    <option value="ID_CARD" th:selected="${category == 'ID_CARD'}">ID Cards & Passes</option>
+                    <option value="BOOKS_STATIONERY" th:selected="${category == 'BOOKS_STATIONERY'}">Books & Notebooks</option>
+                    <option value="KEYS" th:selected="${category == 'KEYS'}">Keys & Keychains</option>
+                    <option value="BAGS_WALLETS" th:selected="${category == 'BAGS_WALLETS'}">Bags & Wallets</option>
+                    <option value="CLOTHING" th:selected="${category == 'CLOTHING'}">Clothing & Accessories</option>
+                    <option value="OTHER" th:selected="${category == 'OTHER'}">Other Belongings</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Search Keyword / Location</label>
+                <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="e.g. Charger, Library, Watch...">
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i> Search
+                </button>
+                <a th:href="@{/lost-found}" class="btn btn-light border" title="Reset Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Items Grid -->
+    <div class="row g-4 mb-5">
+        <div th:if="${items.isEmpty()}" class="col-12 text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+            <h5 class="text-muted">No items found matching your filters.</h5>
+            <a th:href="@{/lost-found}" class="btn btn-outline-primary btn-sm mt-2">View All Listings</a>
+        </div>
+
+        <div class="col-md-6 col-lg-4" th:each="item : ${items}">
+            <div class="campus-card">
+                <div class="campus-card-header d-flex justify-content-between align-items-center">
+                    <span class="badge" th:classappend="${item.type == 'LOST' ? 'bg-danger' : 'bg-success'}" th:text="${item.type}">LOST</span>
+                    <span class="badge"
+                          th:classappend="${item.status == 'RESOLVED' ? 'bg-secondary' : item.status == 'CLAIMED' ? 'bg-info' : 'bg-light text-dark border'}"
+                          th:text="${item.status}">REPORTED</span>
+                </div>
+                <div class="campus-card-body">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-light text-secondary border small" th:text="${item.category}">ELECTRONICS</span>
+                        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i><span th:text="${item.itemDate}">2026-11-14</span></small>
+                    </div>
+
+                    <h5 class="fw-bold mb-2">
+                        <a th:href="@{'/lost-found/view/' + ${item.id}}" class="text-decoration-none text-dark" th:text="${item.title}">Item Title</a>
+                    </h5>
+                    <p class="text-muted small mb-3" th:text="${item.description}" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        Item description.
+                    </p>
+
+                    <div class="small text-secondary mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> <strong th:text="${item.location}">Central Library</strong>
+                    </div>
+
+                    <div class="small text-muted">
+                        <i class="bi bi-person me-1"></i> Reported by: <span th:text="${item.reportedBy.fullName}">Aarav</span>
+                    </div>
+                </div>
+
+                <div class="campus-card-footer d-flex justify-content-between align-items-center">
+                    <span class="small text-muted" th:text="${item.contactPhone != null ? item.contactPhone : 'Contact in Details'}">Phone</span>
+                    <a th:href="@{'/lost-found/view/' + ${item.id}}" class="btn btn-sm btn-outline-primary">
+                        Details & Claim &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

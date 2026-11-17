@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="mt-auto">
+    <div class="container-fluid px-lg-5">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-mortarboard-fill text-warning fs-3"></i>
+                    <h5 class="text-white mb-0 fw-bold">Smart Campus System</h5>
+                </div>
+                <p class="small text-white-50">
+                    A unified digital management platform providing seamless campus event discovery, smart room booking with conflict prevention, lost & found registry, maintenance ticket tracking, and interactive campus navigation.
+                </p>
+                <div class="d-flex gap-3 text-white-50">
+                    <span class="badge bg-secondary">Java 21/22</span>
+                    <span class="badge bg-primary">Spring Boot 3.3.5</span>
+                    <span class="badge bg-info text-dark">MySQL 8.0</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 col-6">
+                <h6 class="text-white fw-semibold mb-3">Services</h6>
+                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                    <li><a th:href="@{/events}"><i class="bi bi-chevron-right me-1"></i> Campus Events</a></li>
+                    <li><a th:href="@{/rooms}"><i class="bi bi-chevron-right me-1"></i> Room Availability</a></li>
+                    <li><a th:href="@{/lost-found}"><i class="bi bi-chevron-right me-1"></i> Lost & Found</a></li>
+                    <li><a th:href="@{/notices}"><i class="bi bi-chevron-right me-1"></i> Notice Board</a></li>
+                    <li><a th:href="@{/complaints}"><i class="bi bi-chevron-right me-1"></i> Maintenance</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6 col-6">
+                <h6 class="text-white fw-semibold mb-3">Campus Portals</h6>
+                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                    <li><a th:href="@{/directory}"><i class="bi bi-chevron-right me-1"></i> Campus Map & Directory</a></li>
+                    <li><a th:href="@{/dashboard}"><i class="bi bi-chevron-right me-1"></i> Student/Staff Dashboard</a></li>
+                    <li><a th:href="@{/login}"><i class="bi bi-chevron-right me-1"></i> Account Sign In</a></li>
+                    <li><a th:href="@{/register}"><i class="bi bi-chevron-right me-1"></i> Student Registration</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h6 class="text-white fw-semibold mb-3">Campus Emergency & Help</h6>
+                <ul class="list-unstyled small mb-0 text-white-50 d-flex flex-column gap-2">
+                    <li><i class="bi bi-telephone-fill me-2 text-warning"></i> Campus Control Room: 011-2345-6700</li>
+                    <li><i class="bi bi-heart-pulse-fill me-2 text-danger"></i> Medical Center: 011-2345-6709</li>
+                    <li><i class="bi bi-shield-shaded me-2 text-info"></i> Security & Lost/Found: 011-2345-6710</li>
+                    <li><i class="bi bi-envelope-fill me-2 text-secondary"></i> Support: support@campus.edu</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-top border-secondary pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center small text-white-50">
+            <div>&copy; 2026 Smart Campus Management System. College Project Implementation.</div>
+            <div class="mt-2 mt-md-0">
+                <span class="text-white-50">Built with Spring Boot &bull; Thymeleaf &bull; MySQL</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Main JS -->
+    <script th:src="@{/js/main.js}"></script>
+</footer>
+</body>
+</html>

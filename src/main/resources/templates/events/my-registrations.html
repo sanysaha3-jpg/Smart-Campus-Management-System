@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Event Registrations')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-ticket-perforated-fill text-warning me-2"></i> My Event Registrations</h3>
+            <p class="text-muted small mb-0">Track all campus events, hackathons, and workshops you have signed up for.</p>
+        </div>
+        <a th:href="@{/events}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-calendar-plus me-1"></i> Browse More Events
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Event</th>
+                        <th>Category</th>
+                        <th>Date & Time</th>
+                        <th>Venue</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${registrations.isEmpty()}">
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-ticket-detailed fs-1 d-block mb-2 text-muted"></i>
+                            You have not registered for any events yet.
+                            <div class="mt-2">
+                                <a th:href="@{/events}" class="btn btn-primary btn-sm">Explore Upcoming Events</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="r : ${registrations}">
+                        <td>
+                            <a th:href="@{'/events/view/' + ${r.event.id}}" class="fw-bold text-decoration-none text-dark" th:text="${r.event.title}">Event Title</a>
+                            <div class="small text-muted" th:text="${r.event.department}">Dept</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${r.event.category}">WORKSHOP</span>
+                        </td>
+                        <td class="small">
+                            <div class="fw-semibold" th:text="${r.event.eventDate}">2026-11-20</div>
+                            <div class="text-muted" th:text="${r.event.startTime} + ' - ' + ${r.event.endTime}">09:00 - 13:00</div>
+                        </td>
+                        <td class="small" th:text="${r.event.venue}">Venue</td>
+                        <td class="small text-muted" th:text="${#temporals.format(r.registrationDate, 'dd MMM yyyy HH:mm')}">15 Nov</td>
+                        <td>
+                            <span class="badge" th:classappend="${r.status == 'REGISTERED' ? 'bg-success' : 'bg-danger'}" th:text="${r.status}">REGISTERED</span>
+                        </td>
+                        <td>
+                            <form th:if="${r.status == 'REGISTERED'}" th:action="@{'/events/cancel-registration/' + ${r.id}}" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this registration? You may forfeit your reserved seat.')">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </button>
+                            </form>
+                            <span th:if="${r.status != 'REGISTERED'}" class="text-muted small">N/A</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

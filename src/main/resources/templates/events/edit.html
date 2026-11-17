@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Edit Event')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow rounded-4 overflow-hidden bg-white">
+                <div class="p-4 bg-primary text-white">
+                    <h3 class="fw-bold mb-1"><i class="bi bi-pencil-square me-2"></i> Edit Event</h3>
+                    <p class="small text-white-50 mb-0" th:text="${event.title}">Event Title</p>
+                </div>
+
+                <div class="p-4 p-md-5">
+                    <form th:action="@{'/events/edit/' + ${event.id}}" th:object="${event}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="title" class="form-label fw-semibold">Event Title *</label>
+                                <input type="text" th:field="*{title}" id="title" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="category" class="form-label fw-semibold">Event Category *</label>
+                                <select th:field="*{category}" id="category" class="form-select" required>
+                                    <option value="WORKSHOP">Workshop</option>
+                                    <option value="HACKATHON">Hackathon</option>
+                                    <option value="FEST">College Fest</option>
+                                    <option value="SPORTS">Sports Tournament</option>
+                                    <option value="SEMINAR">Seminar / Guest Lecture</option>
+                                    <option value="CULTURAL">Cultural Event</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="department" class="form-label fw-semibold">Organizing Department</label>
+                                <input type="text" th:field="*{department}" id="department" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="venue" class="form-label fw-semibold">Venue / Location *</label>
+                                <input type="text" th:field="*{venue}" id="venue" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="eventDate" class="form-label fw-semibold">Event Date *</label>
+                                <input type="date" th:field="*{eventDate}" id="eventDate" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="startTime" class="form-label fw-semibold">Start Time</label>
+                                <input type="time" th:field="*{startTime}" id="startTime" class="form-control">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="endTime" class="form-label fw-semibold">End Time</label>
+                                <input type="time" th:field="*{endTime}" id="endTime" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="maxParticipants" class="form-label fw-semibold">Max Participant Capacity</label>
+                                <input type="number" th:field="*{maxParticipants}" id="maxParticipants" class="form-control" min="1">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="bannerUrl" class="form-label fw-semibold">Cover Image URL</label>
+                                <input type="url" th:field="*{bannerUrl}" id="bannerUrl" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="description" class="form-label fw-semibold">Description & Instructions</label>
+                                <textarea th:field="*{description}" id="description" rows="5" class="form-control"></textarea>
+                            </div>
+
+                            <div class="col-12 mt-4 text-end">
+                                <a th:href="@{'/events/view/' + ${event.id}}" class="btn btn-outline-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

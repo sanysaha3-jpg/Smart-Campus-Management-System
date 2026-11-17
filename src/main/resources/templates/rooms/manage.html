@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Manage Rooms & Bookings')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container-fluid px-lg-5 py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-building-gear text-info me-2"></i> Room & Reservation Administration</h3>
+            <p class="text-muted small mb-0">Oversee all campus facility reservations, configure room inventories, and resolve scheduling requests.</p>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addRoomModal"
+                th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
+            <i class="bi bi-plus-circle me-1"></i> Add New Room
+        </button>
+    </div>
+
+    <!-- All Bookings Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-5">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-calendar2-week me-2"></i> All Campus Room Reservations</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Room</th>
+                        <th>Booked By</th>
+                        <th>Schedule</th>
+                        <th>Purpose</th>
+                        <th>Attendees</th>
+                        <th>Status</th>
+                        <th>Manage Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${allBookings.isEmpty()}">
+                        <td colspan="8" class="text-center py-4 text-muted">No reservations on file.</td>
+                    </tr>
+                    <tr th:each="b : ${allBookings}">
+                        <td th:text="${b.id}">1</td>
+                        <td>
+                            <strong th:text="${b.room.roomNumber}">Room 101</strong>
+                            <div class="small text-muted" th:text="${b.room.building}">Block A</div>
+                        </td>
+                        <td class="small">
+                            <div class="fw-semibold" th:text="${b.user.fullName}">Name</div>
+                            <div class="text-muted" th:text="${b.user.role} + ' &bull; ' + ${b.user.department}">Role</div>
+                        </td>
+                        <td class="small">
+                            <div class="fw-semibold text-primary" th:text="${b.bookingDate}">2026-11-20</div>
+                            <div class="text-muted" th:text="${b.startTime} + ' - ' + ${b.endTime}">10:00 - 12:00</div>
+                        </td>
+                        <td class="small" th:text="${b.purpose}">Purpose</td>
+                        <td class="small" th:text="${b.attendeesCount}">10</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'bg-success' : b.status == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark'}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                        <td>
+                            <form th:action="@{'/rooms/status/' + ${b.id}}" method="post" class="d-flex gap-1">
+                                <select name="status" class="form-select form-select-sm" style="width: 120px;">
+                                    <option value="CONFIRMED" th:selected="${b.status == 'CONFIRMED'}">Confirm</option>
+                                    <option value="CANCELLED" th:selected="${b.status == 'CANCELLED'}">Cancel</option>
+                                    <option value="REJECTED" th:selected="${b.status == 'REJECTED'}">Reject</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Update Status">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Existing Rooms Inventory -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-door-open me-2"></i> Campus Rooms & Halls Inventory</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Building</th>
+                        <th>Type</th>
+                        <th>Floor</th>
+                        <th>Capacity</th>
+                        <th>Facilities</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${rooms}">
+                        <td><strong th:text="${r.roomNumber}">Room 101</strong></td>
+                        <td th:text="${r.building}">Aryabhatta Block</td>
+                        <td><span class="badge bg-primary-subtle text-primary" th:text="${r.roomType}">CLASSROOM</span></td>
+                        <td class="small" th:text="${r.floor}">1st</td>
+                        <td><strong th:text="${r.capacity}">60</strong> seats</td>
+                        <td class="small text-muted" th:text="${r.facilities}">Facilities</td>
+                        <td><span class="badge" th:classappend="${r.status == 'AVAILABLE' ? 'bg-success' : 'bg-warning text-dark'}" th:text="${r.status}">AVAILABLE</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal: Add New Room -->
+<div class="modal fade" id="addRoomModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-1"></i> Add Campus Room</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form th:action="@{/rooms/add}" method="post">
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Room Number *</label>
+                            <input type="text" name="roomNumber" class="form-control" placeholder="e.g. Lab 301, Hall B" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Building *</label>
+                            <input type="text" name="building" class="form-control" placeholder="e.g. Turing Block" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Room Type *</label>
+                            <select name="roomType" class="form-select" required>
+                                <option value="CLASSROOM">Classroom</option>
+                                <option value="LAB">Laboratory</option>
+                                <option value="SEMINAR_HALL">Seminar Hall</option>
+                                <option value="STUDY_ROOM">Study Room</option>
+                                <option value="AUDITORIUM">Auditorium</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Capacity (Seats) *</label>
+                            <input type="number" name="capacity" class="form-control" value="50" min="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Floor</label>
+                            <input type="text" name="floor" class="form-control" placeholder="e.g. Ground Floor, 2nd Floor">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="AVAILABLE">AVAILABLE</option>
+                                <option value="UNDER_MAINTENANCE">UNDER_MAINTENANCE</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Facilities (comma separated)</label>
+                            <input type="text" name="facilities" class="form-control" placeholder="e.g. Projector, AC, High-Speed Wi-Fi, Smart Board">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary fw-semibold"><i class="bi bi-save me-1"></i> Save Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

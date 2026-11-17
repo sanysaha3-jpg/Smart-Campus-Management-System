@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand text-white" th:href="@{/}">
+            <i class="bi bi-mortarboard-fill text-warning"></i>
+            <span>Smart<span class="text-info">Campus</span></span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/events}">
+                        <i class="bi bi-calendar-event me-1"></i> Events
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/rooms}">
+                        <i class="bi bi-door-open me-1"></i> Room Finder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/lost-found}">
+                        <i class="bi bi-box-seam me-1"></i> Lost & Found
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/notices}">
+                        <i class="bi bi-megaphone me-1"></i> Notices
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/complaints}">
+                        <i class="bi bi-tools me-1"></i> Maintenance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" th:href="@{/directory}">
+                        <i class="bi bi-compass me-1"></i> Directory & Map
+                    </a>
+                </li>
+
+                <!-- Admin Dropdown -->
+                <li class="nav-item dropdown" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
+                    <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-shield-lock me-1"></i> Admin
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark border-0 shadow">
+                        <li><a class="dropdown-item" th:href="@{/admin/overview}"><i class="bi bi-speedometer2 me-2"></i> System Overview</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/users}"><i class="bi bi-people me-2"></i> User Management</a></li>
+                        <li><a class="dropdown-item" th:href="@{/rooms/manage}"><i class="bi bi-building-gear me-2"></i> Room Management</a></li>
+                        <li><a class="dropdown-item" th:href="@{/events/manage}"><i class="bi bi-calendar-check me-2"></i> Event Management</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Right side / Auth -->
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <!-- Notifications Bell -->
+                <li class="nav-item dropdown" th:if="${currentUser != null}">
+                    <a class="nav-link text-white position-relative px-2" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell-fill fs-5"></i>
+                        <span th:if="${unreadCount != null and unreadCount > 0}"
+                              class="position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger"
+                              th:text="${unreadCount}">
+                            1
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 border-0">
+                        <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold"><i class="bi bi-bell me-1"></i> Notifications</h6>
+                            <a th:href="@{/notifications}" class="small text-decoration-none text-primary">View All</a>
+                        </div>
+                        <div class="p-2 text-center text-muted small" th:if="${unreadCount == 0}">
+                            <i class="bi bi-check-circle text-success me-1"></i> You're all caught up!
+                        </div>
+                        <div class="p-2 text-center border-top">
+                            <form th:action="@{/notifications/read-all}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-link text-muted p-0 text-decoration-none">
+                                    <i class="bi bi-check2-all me-1"></i> Mark all as read
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Logged In User Dropdown -->
+                <li class="nav-item dropdown" th:if="${currentUser != null}">
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                        <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; font-weight: bold;">
+                            <span th:text="${currentUser.fullName.substring(0, 1)}">U</span>
+                        </div>
+                        <span class="d-none d-md-inline" th:text="${currentUser.fullName}">Aarav Mehta</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold" th:text="${currentUser.fullName}">Aarav Mehta</div>
+                            <small class="text-muted" th:text="${currentUser.email}">aarav@campus.edu</small>
+                            <div class="mt-1">
+                                <span class="badge"
+                                      th:classappend="${currentUser.role.name() == 'ADMIN' ? 'bg-danger' :
+                                                      currentUser.role.name() == 'FACULTY' ? 'bg-indigo' :
+                                                      currentUser.role.name() == 'ORGANIZER' ? 'bg-warning text-dark' : 'bg-success'}"
+                                      th:text="${currentUser.role}">STUDENT</span>
+                            </div>
+                        </li>
+                        <li><a class="dropdown-item py-2" th:href="@{/dashboard}"><i class="bi bi-grid-1x2 me-2"></i> My Dashboard</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/profile}"><i class="bi bi-person me-2"></i> Profile Settings</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/events/my-registrations}"><i class="bi bi-ticket-perforated me-2"></i> My Registrations</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/rooms/my-bookings}"><i class="bi bi-clock-history me-2"></i> My Room Bookings</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/lost-found/my-items}"><i class="bi bi-box me-2"></i> My Lost & Found</a></li>
+                        <li><a class="dropdown-item py-2" th:href="@{/complaints/my-complaints}"><i class="bi bi-wrench me-2"></i> My Maintenance Tickets</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger py-2" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </li>
+
+                <!-- Guest Login & Register Buttons -->
+                <li class="nav-item" th:if="${currentUser == null}">
+                    <a class="btn btn-outline-light btn-sm px-3" th:href="@{/login}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item" th:if="${currentUser == null}">
+                    <a class="btn btn-warning btn-sm px-3 text-dark fw-semibold" th:href="@{/register}">
+                        <i class="bi bi-person-plus me-1"></i> Register
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

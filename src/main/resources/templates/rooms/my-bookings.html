@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Room Reservations')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-clock-history text-info me-2"></i> My Room Reservations</h3>
+            <p class="text-muted small mb-0">Review all your current and past classroom, lab, and study room bookings.</p>
+        </div>
+        <a th:href="@{/rooms}" class="btn btn-primary btn-sm">
+            <i class="bi bi-door-open me-1"></i> Book Another Room
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Room</th>
+                        <th>Building / Floor</th>
+                        <th>Date & Time Slot</th>
+                        <th>Purpose</th>
+                        <th>Attendees</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${bookings.isEmpty()}">
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-calendar-x fs-1 d-block mb-2 text-muted"></i>
+                            You have no active room reservations.
+                            <div class="mt-2">
+                                <a th:href="@{/rooms}" class="btn btn-primary btn-sm">Find & Book Available Rooms</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="b : ${bookings}">
+                        <td>
+                            <strong class="text-primary" th:text="${b.room.roomNumber}">Room 101</strong>
+                            <div class="small text-muted" th:text="${b.room.roomType}">CLASSROOM</div>
+                        </td>
+                        <td class="small">
+                            <div th:text="${b.room.building}">Aryabhatta Block</div>
+                            <div class="text-muted" th:text="${b.room.floor}">1st Floor</div>
+                        </td>
+                        <td class="small">
+                            <div class="fw-semibold" th:text="${b.bookingDate}">2026-11-20</div>
+                            <div class="text-muted" th:text="${b.startTime} + ' - ' + ${b.endTime}">10:00 - 12:00</div>
+                        </td>
+                        <td class="small" th:text="${b.purpose}">Discussion</td>
+                        <td class="small" th:text="${b.attendeesCount} + ' people'">6 people</td>
+                        <td>
+                            <span class="badge" th:classappend="${b.status == 'CONFIRMED' ? 'bg-success' : b.status == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark'}" th:text="${b.status}">CONFIRMED</span>
+                        </td>
+                        <td>
+                            <form th:if="${b.status == 'CONFIRMED'}" th:action="@{'/rooms/cancel/' + ${b.id}}" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this room reservation?')">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </button>
+                            </form>
+                            <span th:if="${b.status != 'CONFIRMED'}" class="text-muted small">N/A</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

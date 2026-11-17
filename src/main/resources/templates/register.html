@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Register Account')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #9e1b32 0%, #c99a2e 100%);">
+                    <i class="bi bi-person-plus-fill fs-1 text-warning mb-2"></i>
+                    <h3 class="fw-bold mb-1">Create Campus Account</h3>
+                    <p class="small text-white-50 mb-0">Join the Smart Campus management network</p>
+                </div>
+
+                <div class="p-4 p-md-5 bg-white">
+                    <form th:action="@{/register}" th:object="${user}" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="username" class="form-label fw-semibold">Username *</label>
+                                <input type="text" th:field="*{username}" id="username" class="form-control" placeholder="choose username" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="password" class="form-label fw-semibold">Password *</label>
+                                <input type="password" th:field="*{password}" id="password" class="form-control" placeholder="min 6 characters" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="fullName" class="form-label fw-semibold">Full Name *</label>
+                                <input type="text" th:field="*{fullName}" id="fullName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-semibold">Campus / Personal Email *</label>
+                                <input type="email" th:field="*{email}" id="email" class="form-control" placeholder="user@campus.edu" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label fw-semibold">Contact Phone</label>
+                                <input type="tel" th:field="*{phone}" id="phone" class="form-control" placeholder="9876543210">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="roleChoice" class="form-label fw-semibold">Account Role *</label>
+                                <select id="roleChoice" name="roleChoice" class="form-select">
+                                    <option value="STUDENT" selected>Student</option>
+                                    <option value="FACULTY">Faculty Member</option>
+                                    <option value="ORGANIZER">Event Organizer / Society Lead</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="studentOrFacultyId" class="form-label fw-semibold">Roll No / Faculty ID</label>
+                                <input type="text" th:field="*{studentOrFacultyId}" id="studentOrFacultyId" class="form-control" placeholder="e.g. CS-2024-001">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="department" class="form-label fw-semibold">Department / Branch</label>
+                                <input type="text" th:field="*{department}" id="department" class="form-control" placeholder="e.g. Computer Science, Mechanical, Electronics">
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">
+                                    <i class="bi bi-check-circle me-1"></i> Complete Registration
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="text-center small text-muted mt-4">
+                        Already have an account?
+                        <a th:href="@{/login}" class="text-primary fw-semibold text-decoration-none">Sign in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

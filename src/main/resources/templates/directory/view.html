@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${location.name})}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="mb-3">
+        <a th:href="@{/directory}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Directory & Map
+        </a>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 2rem;">
+                        <i class="bi" th:classappend="${location.icon}"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex gap-2 align-items-center mb-1">
+                            <span class="badge bg-primary" th:text="${location.category}">ACADEMIC</span>
+                            <span class="badge bg-light text-secondary border small" th:text="${location.mapZone}">Zone A</span>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-0" th:text="${location.name}">Location Name</h2>
+                    </div>
+                </div>
+
+                <div class="row g-3 py-3 my-3 bg-light rounded-3 border">
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block"><i class="bi bi-building text-primary me-1"></i> Block</small>
+                        <strong th:text="${location.block}">Turing Block</strong>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block"><i class="bi bi-layers text-primary me-1"></i> Floor</small>
+                        <strong th:text="${location.floor}">Ground to 4th</strong>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block"><i class="bi bi-clock text-primary me-1"></i> Hours</small>
+                        <strong th:text="${location.operatingHours}">8 AM - 7 PM</strong>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted d-block"><i class="bi bi-telephone text-success me-1"></i> Phone</small>
+                        <strong th:text="${location.contactPhone}">011-2345-6702</strong>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-primary mb-2">Location Description & Services</h5>
+                <p class="text-secondary leading-relaxed mb-4" style="white-space: pre-line;" th:text="${location.description}">
+                    Location description details.
+                </p>
+
+                <div class="p-3 bg-light rounded-3 border mb-4">
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-envelope-at text-info me-2"></i> Contact & Inquiries</h6>
+                    <p class="small text-muted mb-0">
+                        Email: <a th:href="'mailto:' + ${location.contactEmail}" class="text-primary fw-semibold" th:text="${location.contactEmail}">email@campus.edu</a>
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <span class="text-muted small">Campus Facility Directory</span>
+                    <a th:href="@{/directory}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-compass me-1"></i> View on Campus Map
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

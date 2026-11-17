@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Notifications Center')}"></head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div th:replace="~{fragments/alerts :: alerts}"></div>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-1"><i class="bi bi-bell-fill text-warning me-2"></i> Notifications Center</h3>
+            <p class="text-muted small mb-0">Reminders for registered events, room booking updates, maintenance tickets, and campus announcements.</p>
+        </div>
+        <form th:action="@{/notifications/read-all}" method="post">
+            <button type="submit" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-check2-all me-1"></i> Mark All as Read
+            </button>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div th:if="${notifications.isEmpty()}" class="p-5 text-center text-muted">
+            <i class="bi bi-bell-slash fs-1 d-block mb-2 text-muted"></i>
+            <h5>No notifications yet.</h5>
+            <p class="small text-muted mb-0">You're all caught up! New updates on your campus activities will appear here.</p>
+        </div>
+
+        <div class="list-group list-group-flush" th:if="${!notifications.isEmpty()}">
+            <div th:each="n : ${notifications}" class="list-group-item p-4 d-flex justify-content-between align-items-start gap-3 border-bottom"
+                 th:classappend="${!n.read ? 'bg-primary-subtle' : ''}">
+                <div class="d-flex gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 44px; height: 44px;"
+                         th:classappend="${n.type == 'EVENT' ? 'bg-warning-subtle text-warning' :
+                                         n.type == 'BOOKING' ? 'bg-info-subtle text-info' :
+                                         n.type == 'COMPLAINT' ? 'bg-danger-subtle text-danger' :
+                                         n.type == 'NOTICE' ? 'bg-primary-subtle text-primary' : 'bg-success-subtle text-success'}">
+                        <i class="bi" th:classappend="${n.type == 'EVENT' ? 'bi-calendar-event' :
+                                                      n.type == 'BOOKING' ? 'bi-door-open' :
+                                                      n.type == 'COMPLAINT' ? 'bi-wrench' :
+                                                      n.type == 'NOTICE' ? 'bi-megaphone' : 'bi-bell'}"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h6 class="mb-0 fw-bold text-dark" th:text="${n.title}">Notification Title</h6>
+                            <span th:if="${!n.read}" class="badge bg-primary" style="font-size: 0.65rem;">NEW</span>
+                        </div>
+                        <p class="mb-1 text-secondary small" th:text="${n.message}">Notification message details.</p>
+                        <small class="text-muted"><i class="bi bi-clock me-1"></i> <span th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy HH:mm')}">Date</span></small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <a th:if="${n.link != null and !n.link.isEmpty()}" th:href="${n.link}" class="btn btn-sm btn-outline-primary">
+                        View &rarr;
+                    </a>
+                    <form th:if="${!n.read}" th:action="@{'/notifications/read/' + ${n.id}}" method="post">
+                        <button type="submit" class="btn btn-sm btn-light border text-muted" title="Mark as read">
+                            <i class="bi bi-check2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
