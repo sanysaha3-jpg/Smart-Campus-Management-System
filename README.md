@@ -168,17 +168,4 @@ smart-campus/
 ```
 
 ---
-
-## 🎓 College Viva / Project Evaluation Q&A
-
-**Q: How does the system prevent overlapping room reservations?**  
-*A: The `RoomBookingRepository` uses an overlap query: `(:newStart < existingEnd AND :newEnd > existingStart)`. If any confirmed booking matches the room on the requested date within that interval, the booking service throws a validation exception and redirects the user with an alert highlighting the conflicting booking.*
-
-**Q: Does the project support different roles?**  
-*A: Yes, four roles are implemented: `STUDENT`, `FACULTY`, `ORGANIZER`, and `ADMIN`. Each role sees a tailored navigation bar and dashboard, with route-level security enforced by `AuthInterceptor`.*
-
-**Q: What happens if MySQL is not running on the evaluator's machine?**  
-*A: The project includes an automatic H2 fallback profile. Running `run-h2.bat` launches the complete application with zero database installation required.*
-
----
 &copy; 2026 Smart Campus Management System. All rights reserved.
